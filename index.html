@@ -304,10 +304,11 @@
       authorElement.textContent = book.authors.map(author => author.name).join(', ');
 
       // Enlace para leer el libro
-      const readButton = document.createElement('button');
+      const readButton = document.createElement('a'); // Cambia a <a> en lugar de <button>
       readButton.classList.add('read-button');
       readButton.textContent = 'Read';
-      readButton.onclick = () => openIframe(book.formats['text/html']); // Abre el iframe
+      readButton.href = book.formats['text/html']; // Redirige a la URL del libro
+      readButton.target = '_blank'; // Abrir en una nueva pestaña
 
       bookElement.appendChild(titleElement);
       bookElement.appendChild(authorElement);
@@ -315,49 +316,8 @@
       resultsContainer.appendChild(bookElement);
     });
   }
-
-  function openIframe(url) {
-    // Crear el fondo oscuro
-    const overlay = document.createElement('div');
-    overlay.style.position = 'fixed';
-    overlay.style.top = 0;
-    overlay.style.left = 0;
-    overlay.style.width = '100%';
-    overlay.style.height = '100%';
-    overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
-    overlay.style.zIndex = 200;
-    
-    // Crear el iframe
-    const iframe = document.createElement('iframe');
-    iframe.src = url;
-    iframe.style.width = '80%';
-    iframe.style.height = '80%';
-    iframe.style.border = 'none';
-    iframe.style.borderRadius = '10px';
-    iframe.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.3)';
-    iframe.style.position = 'absolute';
-    iframe.style.top = '50%';
-    iframe.style.left = '50%';
-    iframe.style.transform = 'translate(-50%, -50%)';
-    iframe.style.backgroundColor = 'white';
-
-    // Crear el botón de cerrar (X)
-    const closeButton = document.createElement('div');
-    closeButton.textContent = 'X';
-    closeButton.style.position = 'absolute';
-    closeButton.style.top = '10px';
-    closeButton.style.right = '10px';
-    closeButton.style.color = 'white';
-    closeButton.style.fontSize = '24px';
-    closeButton.style.cursor = 'pointer';
-    closeButton.onclick = () => document.body.removeChild(overlay); // Cerrar el iframe
-
-    // Agregar elementos al fondo
-    overlay.appendChild(closeButton);
-    overlay.appendChild(iframe);
-    document.body.appendChild(overlay);
-  }
 </script>
+
 
 
 </body>
