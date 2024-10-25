@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Fälschen Project</title>
+  <link rel="icon" href="icon.png">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baskervville+SC&display=swap">
+  <style>
+    /* General */
+    body {
+      margin: 0;
+      font-family: 'Baskervville SC', serif;
+      background-color: #ffffff;
+    }
+
+    header {
+      background-color: #000000;
+      padding: 10px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header img {
+      max-width: 140px;
+      margin-left: 20px;
+    }
+
+    .heart-icon {
+      margin-right: 20px;
+      position: relative;
+      cursor: pointer;
+    }
+
+    .heart-icon svg {
+      width: 30px;
+      height: 30px;
+    }
+
+    .heart-icon .tooltip {
+      display: none;
+      position: absolute;
+      top: 40px;
+      right: 0;
+      background-color: #000000;
+      color: #ffffff;
+      padding: 5px 10px;
+      border-radius: 5px;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .heart-icon:hover .tooltip {
+      display: block;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    /* Limitar espacio de texto */
+    .info-text {
+      font-size: 18px;
+      margin-bottom: 20px;
+      line-height: 1.6;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .search-box {
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: center;
+      background-color: #f0f0f0;
+      padding: 20px;
+      border-radius: 10px;
+    }
+
+    .search-box input {
+      width: 80%;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 5px 0 0 5px;
+    }
+
+    .search-button {
+      width: 20%;
+      padding: 10px;
+      background-color: #000000;
+      color: #ffffff;
+      border: none;
+      border-radius: 0 5px 5px 0;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .search-button:hover {
+      background-color: #444444;
+    }
+
+    /* Highlighters */
+    .highlighters {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .highlight {
+      background-color: #ffe0b3;
+      padding: 10px 20px;
+      border-radius: 20px;
+      font-size: 14px;
+      color: #333;
+      text-align: center;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .highlight:nth-child(2) {
+      background-color: #d1f2eb;
+    }
+
+    .highlight:nth-child(3) {
+      background-color: #d7bde2;
+    }
+
+    .highlight:nth-child(4) {
+      background-color: #d7bde2;
+    }
+
+    #logo-large {
+      max-width: 180px;
+      display: block;
+      margin: 70px auto;
+    }
+
+    .results {
+      margin-top: 20px;
+    }
+
+    .book {
+      border-bottom: 1px solid #ccc;
+      padding: 10px 0;
+    }
+
+    .book-title {
+      font-weight: bold;
+    }
+
+    .book-author {
+      color: #555;
+    }
+
+    .read-button {
+    display: inline-block;
+    margin-top: 5px;
+    padding: 8px 12px;
+    background-color: #000000;
+    color: #FFFFFF;
+    text-decoration: none;
+    border-radius: 0px;
+    font-size: 14px;
+    border: none; 
+}
+
+
+    .read-button:hover {
+      background-color: #deb6a7;
+    }
+
+    /* Estilos para el modal */
+    #modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.8);
+      z-index: 200;
+    }
+
+    #modal-content {
+      background-color: white;
+      width: 60%;
+      height: 70%;
+      max-width: 600px;
+      max-height: 400px;
+      margin: 100px auto;
+      position: relative;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    #modal iframe {
+      width: 100%;
+      height: 100%;
+    }
+
+    #close-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background-color: white;
+      color: black;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+      padding: 5px;
+      border-radius: 50%;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header con logo y corazón -->
+  <header>
+    <a href="index.html"><img src="mainlogo.svg" alt="The Esdra Project Logo"></a>
+    <div class="heart-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="red">
+        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+      </svg>
+      <div class="tooltip">Made with love by Yared López</div>
+    </div>
+  </header>
+
+  <!-- Contenido Principal -->
+  <div class="container">
+       <img id="logo-large" src="logo.svg" alt="The Esdra Project Logo Large">
+    <div class="info-text">
+      A small project page, this page uses Project Gutenberg as the basis of its operation, we believe in free access and that every knowledge can be shared for free, great books for amazing people like you.
+    </div>
+
+    <!-- Cuadro de búsqueda -->
+    <div class="search-box">
+      <input type="text" id="searchInput" placeholder="Search by title or author...">
+      <button id="searchButton" class="search-button">Search</button>
+    </div>
+
+    <!-- Highlighters debajo del texto -->
+    <div class="highlighters">
+      <div class="highlight">Open Knowledge</div>
+      <div class="highlight">Books for All</div>
+      <div class="highlight">Open Access</div>
+      
+      
+      
+    </div>
+
+    <!-- Logo más grande con información adicional -->
+
+
+    <!-- Resultados de búsqueda -->
+    <div id="results" class="results"></div>
+  </div>
+
+  <!-- Modal -->
+  <div id="modal">
+    <div id="modal-content">
+      <button id="close-btn">&times;</button>
+      <iframe src=""></iframe>
+    </div>
+  </div>
+
+<script>
+  document.getElementById('searchButton').addEventListener('click', function() {
+    const query = document.getElementById('searchInput').value;
+    if (query) {
+      fetch(`https://gutendex.com/books?search=${query}`)
+        .then(response => response.json())
+        .then(data => {
+          displayResults(data.results);
+        })
+        .catch(error => console.error('Error fetching data:', error));
+    }
+  });
+
+  function displayResults(books) {
+    const resultsContainer = document.getElementById('results');
+    resultsContainer.innerHTML = ''; // Limpiar resultados previos
+
+    if (books.length === 0) {
+      resultsContainer.innerHTML = '<p>No results found.</p>';
+      return;
+    }
+
+    books.forEach(book => {
+      const bookElement = document.createElement('div');
+      bookElement.classList.add('book');
+
+      const titleElement = document.createElement('div');
+      titleElement.classList.add('book-title');
+      titleElement.textContent = book.title;
+
+      const authorElement = document.createElement('div');
+      authorElement.classList.add('book-author');
+      authorElement.textContent = book.authors.map(author => author.name).join(', ');
+
+      // Enlace para leer el libro
+      const readButton = document.createElement('button');
+      readButton.classList.add('read-button');
+      readButton.textContent = 'Read';
+      readButton.onclick = () => openIframe(book.formats['text/html']); // Abre el iframe
+
+      bookElement.appendChild(titleElement);
+      bookElement.appendChild(authorElement);
+      bookElement.appendChild(readButton);
+      resultsContainer.appendChild(bookElement);
+    });
+  }
+
+  function openIframe(url) {
+    // Crear el fondo oscuro
+    const overlay = document.createElement('div');
+    overlay.style.position = 'fixed';
+    overlay.style.top = 0;
+    overlay.style.left = 0;
+    overlay.style.width = '100%';
+    overlay.style.height = '100%';
+    overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+    overlay.style.zIndex = 200;
+    
+    // Crear el iframe
+    const iframe = document.createElement('iframe');
+    iframe.src = url;
+    iframe.style.width = '80%';
+    iframe.style.height = '80%';
+    iframe.style.border = 'none';
+    iframe.style.borderRadius = '10px';
+    iframe.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.3)';
+    iframe.style.position = 'absolute';
+    iframe.style.top = '50%';
+    iframe.style.left = '50%';
+    iframe.style.transform = 'translate(-50%, -50%)';
+    iframe.style.backgroundColor = 'white';
+
+    // Crear el botón de cerrar (X)
+    const closeButton = document.createElement('div');
+    closeButton.textContent = 'X';
+    closeButton.style.position = 'absolute';
+    closeButton.style.top = '10px';
+    closeButton.style.right = '10px';
+    closeButton.style.color = 'white';
+    closeButton.style.fontSize = '24px';
+    closeButton.style.cursor = 'pointer';
+    closeButton.onclick = () => document.body.removeChild(overlay); // Cerrar el iframe
+
+    // Agregar elementos al fondo
+    overlay.appendChild(closeButton);
+    overlay.appendChild(iframe);
+    document.body.appendChild(overlay);
+  }
+</script>
+
+
+</body>
+</html>
