@@ -7,224 +7,232 @@
   <link rel="icon" href="icon.png">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baskervville+SC&display=swap">
   <style>
-    /* General */
-    body {
-      margin: 0;
-      font-family: 'Baskervville SC', serif;
-      background-color: #ffffff;
-    }
-
-    header {
-      background-color: #000000;
-      padding: 10px;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    header img {
-      max-width: 140px;
-      margin-left: 20px;
-    }
-
-    .heart-icon {
-      margin-right: 20px;
-      position: relative;
-      cursor: pointer;
-    }
-
-    .heart-icon svg {
-      width: 30px;
-      height: 30px;
-    }
-
-    .heart-icon .tooltip {
-      display: none;
-      position: absolute;
-      top: 40px;
-      right: 0;
-      background-color: #000000;
-      color: #ffffff;
-      padding: 5px 10px;
-      border-radius: 5px;
-      font-size: 12px;
-      white-space: nowrap;
-    }
-
-    .heart-icon:hover .tooltip {
-      display: block;
-    }
-
-    .container {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 20px;
-    }
-
-    /* Limitar espacio de texto */
-    .info-text {
-      font-size: 18px;
-      margin-bottom: 20px;
-      line-height: 1.6;
-      max-width: 800px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    .search-box {
-      margin-bottom: 20px;
-      display: flex;
-      justify-content: center;
-      background-color: #f0f0f0;
-      padding: 20px;
-      border-radius: 10px;
-    }
-
-    .search-box input {
-      width: 80%;
-      padding: 10px;
-      font-size: 16px;
-      border: 1px solid #ccc;
-      border-radius: 5px 0 0 5px;
-    }
-
-    .search-button {
-      width: 20%;
-      padding: 10px;
-      background-color: #000000;
-      color: #ffffff;
-      border: none;
-      border-radius: 0 5px 5px 0;
-      cursor: pointer;
-      font-size: 16px;
-    }
-
-    .search-button:hover {
-      background-color: #444444;
-    }
-
-    /* Highlighters */
-    .highlighters {
-      display: flex;
-      justify-content: center;
-      gap: 15px;
-      margin-top: 20px;
-    }
-
-    .highlight {
-      background-color: #ffe0b3;
-      padding: 10px 20px;
-      border-radius: 20px;
-      font-size: 14px;
-      color: #333;
-      text-align: center;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-
-    .highlight:nth-child(2) {
-      background-color: #d1f2eb;
-    }
-
-    .highlight:nth-child(3) {
-      background-color: #d7bde2;
-    }
-
-    .highlight:nth-child(4) {
-      background-color: #d7bde2;
-    }
-
-    #logo-large {
-      max-width: 180px;
-      display: block;
-      margin: 70px auto;
-    }
-
-    .results {
-      margin-top: 20px;
-    }
-
-    .book {
-      border-bottom: 1px solid #ccc;
-      padding: 10px 0;
-    }
-
-    .book-title {
-      font-weight: bold;
-    }
-
-    .book-author {
-      color: #555;
-    }
-
-    .read-button {
-    display: inline-block;
-    margin-top: 5px;
-    padding: 8px 12px;
-    background-color: #000000;
-    color: #FFFFFF;
-    text-decoration: none;
-    border-radius: 0px;
-    font-size: 14px;
-    border: none; 
+/* General */
+body {
+  margin: 0;
+  font-family: 'Baskervville SC', serif;
+  background-color: #FFFFFF;
 }
 
+header {
+  background-color: #FFFFFF;
+  padding: 10px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Sombra suave debajo del header */
+}
 
-    .read-button:hover {
-      background-color: #deb6a7;
-    }
+header img {
+  max-width: 60px;
+  margin-left: 2px;
+}
 
-    /* Estilos para el modal */
-    #modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.8);
-      z-index: 200;
-    }
+.heart-icon {
+  margin-right: 20px;
+  position: relative;
+  cursor: pointer;
+}
 
-    #modal-content {
-      background-color: white;
-      width: 60%;
-      height: 70%;
-      max-width: 600px;
-      max-height: 400px;
-      margin: 100px auto;
-      position: relative;
-      border-radius: 10px;
-      overflow: hidden;
-    }
+.heart-icon svg {
+  width: 30px;
+  height: 30px;
+}
 
-    #modal iframe {
-      width: 100%;
-      height: 100%;
-    }
+.heart-icon .tooltip {
+  display: none;
+  position: absolute;
+  top: 40px;
+  right: 0;
+  background-color: #000000;
+  color: #ffffff;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 12px;
+  white-space: nowrap;
+}
 
-    #close-btn {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      background-color: white;
-      color: black;
-      border: none;
-      font-size: 20px;
-      cursor: pointer;
-      padding: 5px;
-      border-radius: 50%;
-    }
+.heart-icon:hover .tooltip {
+  display: block;
+}
+
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Limitar espacio de texto */
+.info-text {
+  font-size: 18px;
+  margin-bottom: 20px;
+  line-height: 1.6;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.search-box {
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
+  background-color: #f0f0f0;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.search-box input {
+  width: 80%;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px 0 0 5px;
+}
+
+.search-button {
+  width: 20%;
+  padding: 10px;
+  background-color: #000000;
+  color: #ffffff;
+  border: none;
+  border-radius: 0 5px 5px 0;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.search-button:hover {
+  background-color: #444444;
+}
+
+/* Highlighters */
+.highlighters {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.highlight {
+  background-color: #ffe0b3;
+  padding: 10px 20px;
+  border-radius: 20px;
+  font-size: 14px;
+  color: #333;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.highlight:nth-child(2) {
+  background-color: #d1f2eb;
+}
+
+.highlight:nth-child(3) {
+  background-color: #d7bde2;
+}
+
+.highlight:nth-child(4) {
+  background-color: #d7bde2;
+}
+
+#logo-large {
+  max-width: 100px;
+  display: block;
+  margin: 70px auto;
+}
+
+.results {
+  margin-top: 20px;
+}
+
+.book {
+  border-bottom: 1px solid #ccc;
+  padding: 10px 0;
+}
+
+.book-title {
+  font-weight: bold;
+}
+
+.book-author {
+  color: #555;
+}
+
+.read-button {
+  display: inline-block;
+  margin-top: 5px;
+  padding: 8px 12px;
+  background-color: #000000;
+  color: #FFFFFF;
+  text-decoration: none;
+  border-radius: 0px;
+  font-size: 14px;
+  border: none; 
+}
+
+.read-button:hover {
+  background-color: #deb6a7;
+}
+
+/* Estilos para el modal */
+#modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  z-index: 200;
+}
+
+#modal-content {
+  background-color: white;
+  width: 60%;
+  height: 70%;
+  max-width: 600px;
+  max-height: 400px;
+  margin: 100px auto;
+  position: relative;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+#modal iframe {
+  width: 100%;
+  height: 100%;
+}
+
+#close-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: white;
+  color: black;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 50%;
+}
+
+/* Ajuste solo en vista de escritorio */
+@media (min-width: 768px) {
+  .container {
+    margin-top: 50px; /* Espacio adicional en vista de escritorio */
+  }
+}
+
   </style>
 </head>
 <body>
   <!-- Header con logo y corazón -->
   <header>
-    <a href="index.html"><img src="mainlogo.svg" alt="The Fälschen Project Logo"></a>
+    <a href="index.html"><img src="logo.svg" alt="The Fälschen Project Logo"></a>
     <div class="heart-icon">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="red">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#FF8294">
         <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
       </svg>
       <div class="tooltip">Made with love by Yared López</div>
@@ -233,7 +241,7 @@
 
   <!-- Contenido Principal -->
   <div class="container">
-       <img id="logo-large" src="logo.svg" alt="The Fälschen Project Logo Large">
+       <img id="logo-large" src="mainlogo.svg" alt="The Fälschen Project Logo Large">
     <div class="info-text">
      A small project page that works as a search engine for free books with free access for amazing people like you. Based on Project Gutenberg, Open Library and Dbooks.
     </div>
