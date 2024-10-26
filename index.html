@@ -305,7 +305,7 @@
     
     if (query) {
       // Mostrar el mensaje de búsqueda en proceso
-      resultsContainer.innerHTML = '<p style="color: gray;">Searching for results (may take a while)</p>';
+      resultsContainer.innerHTML = '<p style="color: gray;">Searching for results (May take some time)</p>';
 
       // Llamada a la API de Project Gutenberg
       fetch(`https://gutendex.com/books?search=${encodeURIComponent(query)}`)
