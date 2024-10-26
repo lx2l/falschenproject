@@ -235,7 +235,7 @@
   <div class="container">
        <img id="logo-large" src="logo.svg" alt="The Fälschen Project Logo Large">
     <div class="info-text">
-     A small project page in which we believe in free access to great books for awesome people like you. Based on Open Library and Project Gutenberg.
+     A small project page that works as a search engine for free books with free access for amazing people like you. Based on Project Gutenberg, Open Library and Dbooks.
     </div>
 
     <!-- Cuadro de búsqueda -->
@@ -269,96 +269,162 @@
     </div>
   </div>
 
-<script>
-  document.getElementById('searchButton').addEventListener('click', function() {
-    const query = document.getElementById('searchInput').value;
-    if (query) {
-      // Llamada a la API de Project Gutenberg
-      fetch(`https://gutendex.com/books?search=${encodeURIComponent(query)}`)
-        .then(response => response.json())
-        .then(gutenbergData => {
-          // Llamada a la API de Open Library
-          fetch(`https://openlibrary.org/search.json?q=${encodeURIComponent(query)}`)
-            .then(response => response.json())
-            .then(openLibraryData => {
-              displayResults(gutenbergData.results, openLibraryData.docs);
-            })
-            .catch(error => console.error('Error fetching Open Library data:', error));
-        })
-        .catch(error => console.error('Error fetching Project Gutenberg data:', error));
-    }
-  });
+  <script>
+    // JSON nativo con los datos de Dbooks
+    const dbooksData = {
+      "status": "ok",
+      "total": "87",
+      "books": [
+        {
+          "id": "3030168778",
+          "title": "Programming for Computations - Python",
+          "subtitle": "A Gentle Introduction to Numerical Simulations with Python 3.6",
+          "authors": "Svein Linge, Hans Petter Langtangen",
+          "url": "https://www.dbooks.org/programming-for-computations-python-3030168778/"
+        },
+        {
+          "id": "1503212300",
+          "title": "Invent Your Own Computer Games with Python",
+          "subtitle": "A beginner's guide to computer programming in Python",
+          "authors": "Al Sweigart",
+          "url": "https://www.dbooks.org/invent-your-own-computer-games-with-python-1503212300/"
+        },
+        {
+          "id": "1491912057",
+          "title": "Python Data Science Handbook",
+          "subtitle": "Essential Tools for Working with Data",
+          "authors": "Jake VanderPlas",
+          "url": "https://www.dbooks.org/python-data-science-handbook-1491912057/"
+        }
+      ]
+    };
 
-  function displayResults(gutenbergBooks, openLibraryBooks) {
-    const resultsContainer = document.getElementById('results');
-    resultsContainer.innerHTML = ''; // Limpiar resultados previos
-
-    if (gutenbergBooks.length === 0 && openLibraryBooks.length === 0) {
-      resultsContainer.innerHTML = '<p>No results found.</p>';
-      return;
-    }
-
-    // Mostrar resultados de Project Gutenberg
-    gutenbergBooks.forEach(book => {
-      const bookElement = document.createElement('div');
-      bookElement.classList.add('book');
-
-      const titleElement = document.createElement('div');
-      titleElement.classList.add('book-title');
-      titleElement.textContent = book.title;
-
-      const authorElement = document.createElement('div');
-      authorElement.classList.add('book-author');
-      authorElement.textContent = book.authors.map(author => author.name).join(', ');
-
-      const readButton = document.createElement('a');
-      readButton.classList.add('read-button');
-      readButton.textContent = 'Read';
-      readButton.href = book.formats['text/html'];
-      readButton.target = '_blank';
-
-      bookElement.appendChild(titleElement);
-      bookElement.appendChild(authorElement);
-      bookElement.appendChild(readButton);
-      resultsContainer.appendChild(bookElement);
+    document.getElementById('searchButton').addEventListener('click', function() {
+      const query = document.getElementById('searchInput').value;
+      if (query) {
+        // Llamada a la API de Project Gutenberg
+        fetch(`https://gutendex.com/books?search=${encodeURIComponent(query)}`)
+          .then(response => response.json())
+          .then(gutenbergData => {
+            // Llamada a la API de Open Library
+            fetch(`https://openlibrary.org/search.json?q=${encodeURIComponent(query)}`)
+              .then(response => response.json())
+              .then(openLibraryData => {
+                displayResults(gutenbergData.results, openLibraryData.docs, dbooksData.books);
+              })
+              .catch(error => console.error('Error fetching Open Library data:', error));
+          })
+          .catch(error => console.error('Error fetching Project Gutenberg data:', error));
+      }
     });
 
-    // Separador entre resultados de ambas fuentes
-    if (openLibraryBooks.length > 0) {
-      const separator = document.createElement('div');
-      separator.style.margin = '20px 0';
-      separator.style.textAlign = 'center';
-      separator.textContent = 'Results from Open Library';
-      resultsContainer.appendChild(separator);
+    function displayResults(gutenbergBooks, openLibraryBooks, dbooksBooks) {
+      const resultsContainer = document.getElementById('results');
+      resultsContainer.innerHTML = ''; // Limpiar resultados previos
+
+      if (gutenbergBooks.length === 0 && openLibraryBooks.length === 0 && dbooksBooks.length === 0) {
+        resultsContainer.innerHTML = '<p>No results</p>';
+        return;
+      }
+
+      // Mostrar resultados de Project Gutenberg
+      gutenbergBooks.forEach(book => {
+        const bookElement = document.createElement('div');
+        bookElement.classList.add('book');
+
+        const titleElement = document.createElement('div');
+        titleElement.classList.add('book-title');
+        titleElement.textContent = book.title;
+
+        const authorElement = document.createElement('div');
+        authorElement.classList.add('book-author');
+        authorElement.textContent = book.authors.map(author => author.name).join(', ');
+
+        const readButton = document.createElement('a');
+        readButton.classList.add('read-button');
+        readButton.textContent = 'Read';
+        readButton.href = book.formats['text/html'];
+        readButton.target = '_blank';
+
+        bookElement.appendChild(titleElement);
+        bookElement.appendChild(authorElement);
+        bookElement.appendChild(readButton);
+        resultsContainer.appendChild(bookElement);
+      });
+
+      // Separador entre resultados de Gutenberg y Open Library
+      if (openLibraryBooks.length > 0) {
+        const separator = document.createElement('div');
+        separator.style.margin = '20px 0';
+        separator.style.textAlign = 'center';
+        separator.textContent = 'Open Library';
+        resultsContainer.appendChild(separator);
+      }
+
+      // Mostrar resultados de Open Library
+      openLibraryBooks.forEach(book => {
+        const bookElement = document.createElement('div');
+        bookElement.classList.add('book');
+
+        const titleElement = document.createElement('div');
+        titleElement.classList.add('book-title');
+        titleElement.textContent = book.title;
+
+        const authorElement = document.createElement('div');
+        authorElement.classList.add('book-author');
+        authorElement.textContent = book.author_name ? book.author_name.join(', ') : 'Autor desconocido';
+
+        const readButton = document.createElement('a');
+        readButton.classList.add('read-button');
+        readButton.textContent = 'Read';
+        readButton.href = book.key ? `https://openlibrary.org${book.key}` : '#';
+        readButton.target = '_blank';
+
+        bookElement.appendChild(titleElement);
+        bookElement.appendChild(authorElement);
+        bookElement.appendChild(readButton);
+        resultsContainer.appendChild(bookElement);
+      });
+
+      // Separador entre resultados de Open Library y Dbooks
+      if (dbooksBooks.length > 0) {
+        const separator = document.createElement('div');
+        separator.style.margin = '20px 0';
+        separator.style.textAlign = 'center';
+        separator.textContent = 'Latest results';
+        resultsContainer.appendChild(separator);
+      }
+
+      // Mostrar resultados de Dbooks
+      dbooksBooks.forEach(book => {
+        const bookElement = document.createElement('div');
+        bookElement.classList.add('book');
+
+        const titleElement = document.createElement('h2');
+        titleElement.textContent = book.title || 'Sin título';
+
+        const subtitleElement = document.createElement('p');
+        subtitleElement.classList.add('subtitle');
+        subtitleElement.textContent = book.subtitle || '';
+
+        const authorElement = document.createElement('p');
+        authorElement.classList.add('author');
+        authorElement.textContent = `Autor(es): ${book.authors || 'Desconocido'}`;
+
+        const linkButton = document.createElement('a');
+        linkButton.classList.add('read-button');
+        linkButton.textContent = 'Read';
+        linkButton.href = book.url;
+        linkButton.target = '_blank';
+
+        bookElement.appendChild(titleElement);
+        bookElement.appendChild(subtitleElement);
+        bookElement.appendChild(authorElement);
+        bookElement.appendChild(linkButton);
+        resultsContainer.appendChild(bookElement);
+      });
     }
-
-    // Mostrar resultados de Open Library
-    openLibraryBooks.forEach(book => {
-      const bookElement = document.createElement('div');
-      bookElement.classList.add('book');
-
-      const titleElement = document.createElement('div');
-      titleElement.classList.add('book-title');
-      titleElement.textContent = book.title;
-
-      const authorElement = document.createElement('div');
-      authorElement.classList.add('book-author');
-      authorElement.textContent = book.author_name ? book.author_name.join(', ') : 'Unknown Author';
-
-      const readButton = document.createElement('a');
-      readButton.classList.add('read-button');
-      readButton.textContent = 'Read';
-      readButton.href = book.key ? `https://openlibrary.org${book.key}` : '#';
-      readButton.target = '_blank';
-
-      bookElement.appendChild(titleElement);
-      bookElement.appendChild(authorElement);
-      bookElement.appendChild(readButton);
-      resultsContainer.appendChild(bookElement);
-    });
-  }
-</script>
-
+  </script>
 
 
 
