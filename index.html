@@ -235,7 +235,7 @@
   <div class="container">
        <img id="logo-large" src="logo.svg" alt="The Fälschen Project Logo Large">
     <div class="info-text">
-      A small project page, this page uses Project Gutenberg as the basis of its operation, we believe in free access and that every knowledge can be shared for free, great books for amazing people like you.
+     A small project page in which we believe in free access to great books for awesome people like you. Based on Open Library and Project Gutenberg.
     </div>
 
     <!-- Cuadro de búsqueda -->
@@ -273,25 +273,33 @@
   document.getElementById('searchButton').addEventListener('click', function() {
     const query = document.getElementById('searchInput').value;
     if (query) {
-      fetch(`https://gutendex.com/books?search=${query}`)
+      // Llamada a la API de Project Gutenberg
+      fetch(`https://gutendex.com/books?search=${encodeURIComponent(query)}`)
         .then(response => response.json())
-        .then(data => {
-          displayResults(data.results);
+        .then(gutenbergData => {
+          // Llamada a la API de Open Library
+          fetch(`https://openlibrary.org/search.json?q=${encodeURIComponent(query)}`)
+            .then(response => response.json())
+            .then(openLibraryData => {
+              displayResults(gutenbergData.results, openLibraryData.docs);
+            })
+            .catch(error => console.error('Error fetching Open Library data:', error));
         })
-        .catch(error => console.error('Error fetching data:', error));
+        .catch(error => console.error('Error fetching Project Gutenberg data:', error));
     }
   });
 
-  function displayResults(books) {
+  function displayResults(gutenbergBooks, openLibraryBooks) {
     const resultsContainer = document.getElementById('results');
     resultsContainer.innerHTML = ''; // Limpiar resultados previos
 
-    if (books.length === 0) {
+    if (gutenbergBooks.length === 0 && openLibraryBooks.length === 0) {
       resultsContainer.innerHTML = '<p>No results found.</p>';
       return;
     }
 
-    books.forEach(book => {
+    // Mostrar resultados de Project Gutenberg
+    gutenbergBooks.forEach(book => {
       const bookElement = document.createElement('div');
       bookElement.classList.add('book');
 
@@ -303,12 +311,45 @@
       authorElement.classList.add('book-author');
       authorElement.textContent = book.authors.map(author => author.name).join(', ');
 
-      // Enlace para leer el libro
-      const readButton = document.createElement('a'); // Cambia a <a> en lugar de <button>
+      const readButton = document.createElement('a');
       readButton.classList.add('read-button');
       readButton.textContent = 'Read';
-      readButton.href = book.formats['text/html']; // Redirige a la URL del libro
-      readButton.target = '_blank'; // Abrir en una nueva pestaña
+      readButton.href = book.formats['text/html'];
+      readButton.target = '_blank';
+
+      bookElement.appendChild(titleElement);
+      bookElement.appendChild(authorElement);
+      bookElement.appendChild(readButton);
+      resultsContainer.appendChild(bookElement);
+    });
+
+    // Separador entre resultados de ambas fuentes
+    if (openLibraryBooks.length > 0) {
+      const separator = document.createElement('div');
+      separator.style.margin = '20px 0';
+      separator.style.textAlign = 'center';
+      separator.textContent = 'Results from Open Library';
+      resultsContainer.appendChild(separator);
+    }
+
+    // Mostrar resultados de Open Library
+    openLibraryBooks.forEach(book => {
+      const bookElement = document.createElement('div');
+      bookElement.classList.add('book');
+
+      const titleElement = document.createElement('div');
+      titleElement.classList.add('book-title');
+      titleElement.textContent = book.title;
+
+      const authorElement = document.createElement('div');
+      authorElement.classList.add('book-author');
+      authorElement.textContent = book.author_name ? book.author_name.join(', ') : 'Unknown Author';
+
+      const readButton = document.createElement('a');
+      readButton.classList.add('read-button');
+      readButton.textContent = 'Read';
+      readButton.href = book.key ? `https://openlibrary.org${book.key}` : '#';
+      readButton.target = '_blank';
 
       bookElement.appendChild(titleElement);
       bookElement.appendChild(authorElement);
@@ -317,6 +358,7 @@
     });
   }
 </script>
+
 
 
 
